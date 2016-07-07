@@ -56,6 +56,7 @@ type Vlan struct {
 
 type NetworkIPV4 struct {
 	Network string `xml:"network"`
+	ID      int    `xml:"id"`
 }
 
 type ListVlansOptions struct {
