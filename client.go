@@ -51,12 +51,8 @@ type ListVlanResult struct {
 }
 
 type Vlan struct {
-	NetworkIPV4 NetworkIPV4 `xml:"redeipv4"`
-}
-
-type NetworkIPV4 struct {
-	Network string `xml:"network"`
-	ID      int    `xml:"id"`
+	Environment int `xml:"ambiente"`
+	Number      int `xml:"num_vlan"`
 }
 
 type ListVlansOptions struct {
