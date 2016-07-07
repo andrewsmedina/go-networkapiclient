@@ -1,7 +1,7 @@
 package network
 
 import (
-	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -11,7 +11,7 @@ import (
 
 func TestNewClient(t *testing.T) {
 	endpoint := "http://localhost:4243"
-	client, err := NewClient(endpoint)
+	client, err := NewClient(endpoint, "", "")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -21,31 +21,32 @@ func TestNewClient(t *testing.T) {
 }
 
 func TestListVlans(t *testing.T) {
-	jsonVlans := `[
-     {
-             "Id": "8dfafdbc3a40",
-             "Image": "base:latest",
-             "Command": "echo 1",
-             "Created": 1367854155,
-             "Ports":[{"PrivatePort": 2222, "PublicPort": 3333, "Type": "tcp"}],
-             "Status": "Exit 0"
-     }
-]`
-	var expected []Vlan
-	err := json.Unmarshal([]byte(jsonVlans), &expected)
+	xmlVlans := `<?xml version="1.0" encoding="UTF-8"?>
+  <networkapi versao="1.0">
+    <vlan>
+      <redeipv4>
+        <network>10.10.10.0/24</network>
+      </redeipv4>
+    </vlan>
+</networkapi>`
+	var expected ListVlanResult
+	err := xml.Unmarshal([]byte(xmlVlans), &expected)
 	if err != nil {
 		t.Fatal(err)
 	}
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, jsonVlans)
+		fmt.Fprintln(w, xmlVlans)
 	}))
 	defer ts.Close()
-	client, err := NewClient(ts.URL)
-	vlans, err := client.ListVlans(ListVlansOptions{})
+	client, err := NewClient(ts.URL, "login", "password")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !reflect.DeepEqual(vlans, expected) {
-		t.Errorf("ListVlans: Expected %#v. Got %#v.", expected, vlans)
+	result, err := client.ListVlans(ListVlansOptions{Name: "vlan_name"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(result, expected.Vlans) {
+		t.Errorf("ListVlans: Expected %#v. Got %#v.", expected, result)
 	}
 }
