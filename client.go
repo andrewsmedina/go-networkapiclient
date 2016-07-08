@@ -46,20 +46,24 @@ func NewClient(endpoint, user, password string) (*Client, error) {
 	return client, nil
 }
 
+// ListVlanResult represents a Vlan list
 type ListVlanResult struct {
 	Vlans []Vlan `xml:"vlan"`
 }
 
+// NetworkIPV4 represents a network
 type NetworkIPV4 struct {
 	Network string `xml:"network"`
 }
 
+// Vlan represents a vlan
 type Vlan struct {
 	Environment int         `xml:"ambiente"`
 	Number      int         `xml:"num_vlan"`
 	NetworkIPV4 NetworkIPV4 `xml:"redeipv4"`
 }
 
+// ListVlansOptions is used to define the ListVlans parameters
 type ListVlansOptions struct {
 	Name string
 }
@@ -96,6 +100,7 @@ func (c *Client) do(method, path string, headers map[string]string, data io.Read
 	return resp, nil
 }
 
+// ListVlans returns a []Vlan and is filtered by ListVlansOptions
 func (c *Client) ListVlans(opts ListVlansOptions) ([]Vlan, error) {
 	path := "/vlan/find/"
 	headers := map[string]string{
