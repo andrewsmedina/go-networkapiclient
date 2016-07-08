@@ -1,0 +1,7 @@
+language: go
+sudo: false
+addons:
+  apt:
+    packages:
+      - git
+script: go test
