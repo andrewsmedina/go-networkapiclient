@@ -29,7 +29,7 @@ func TestListVlans(t *testing.T) {
       </redeipv4>
     </vlan>
 </networkapi>`
-	var expected ListVlanResult
+	var expected listVlanResult
 	err := xml.Unmarshal([]byte(xmlVlans), &expected)
 	if err != nil {
 		t.Fatal(err)

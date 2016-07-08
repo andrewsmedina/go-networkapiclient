@@ -47,7 +47,7 @@ func NewClient(endpoint, user, password string) (*Client, error) {
 }
 
 // ListVlanResult represents a Vlan list
-type ListVlanResult struct {
+type listVlanResult struct {
 	Vlans []Vlan `xml:"vlan"`
 }
 
@@ -131,7 +131,7 @@ func (c *Client) ListVlans(opts ListVlansOptions) ([]Vlan, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	var result ListVlanResult
+	var result listVlanResult
 	if err := xml.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, err
 	}
